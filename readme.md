@@ -2,13 +2,13 @@
 
 ## Settings In Namecheap
 
-![Domain Settings](../misc/domain.png)
+![Domain Settings](..master/misc/domain.png)
 
 Nameservers: NameCheap BasicDNS
 
 ## Settings In Github
 
-![Github Pages Settings](../misc/github.png)
+![Github Pages Settings](master/misc/github.png)
 A CNAME file is automatically created. There is a single line in the file: `erikvp.com`
 
 ## Setup Github As Origin Master
