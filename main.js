@@ -105,11 +105,11 @@ function drawLines() {
     console.log(`Offset: ${offset}`);
   } else if (angle >= 88 && angle <= 92) {
     angle += 0.03;
-    a = 255;
+    a = Math.round(random(200, 255));
     g = 255;
   } else if (angle >= 268 && angle <= 272) {
     angle += 0.03;
-    a = 255;
+    a = Math.round(random(200, 255));
     g = 255;
   } else {
     angle += 0.2;
