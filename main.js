@@ -7,11 +7,6 @@ let boxL = [];
 let boxC = [];
 let boxR = [];
 
-// number of dots in each box
-let numDotsL = width;
-let numDotsC = width;
-let numDotsR = width;
-
 let space = width / 10; // horizontal spacing
 let boxW = space * 2; // box width is 2 x space
 let boxH = boxW; // make a square x = h
@@ -26,6 +21,10 @@ let xMaxC = xMinC + boxW;
 let xMinR = xMaxC + space;
 let xMaxR = xMinR + boxW;
 
+// number of dots in each box
+let div = 100;
+let numDots = (boxW * boxH) / div;
+
 let pOff = 0; // counter for perlin noise generator
 let colorVal = 0;
 let strokeVal = 0;
@@ -39,19 +38,19 @@ function setup() {
   wNoise.start();
 
   bgColor = color(250, 250, 250);
-  for (let i = 0; i < numDotsL; i++) {
+  for (let i = 0; i < numDots; i++) {
     let x = Math.round(random(xMinL, xMaxL)); // x-coord within left square
     let y = Math.round(random(yMin, yMax)); // y-coord within left square
     boxL.push(new Points(x, y));
   }
 
-  for (let i = 0; i < numDotsC; i++) {
+  for (let i = 0; i < numDots; i++) {
     let x = Math.round(random(xMinC, xMaxC)); // x-coord within center square
     let y = Math.round(random(yMin, yMax)); // y-coord within center square
     boxC.push(new Points(x, y));
   }
 
-  for (let i = 0; i < numDotsR; i++) {
+  for (let i = 0; i < numDots; i++) {
     let x = Math.round(random(xMinR, xMaxR)); // x-coord within right square
     let y = Math.round(random(yMin, yMax)); // y-coord within right square
     boxR.push(new Points(x, y));
@@ -62,19 +61,16 @@ function draw() {
   let ampLevel;
 
   background(bgColor);
+  solidSquares();
 
   strokeVal = noiseVal();
-  ampLevel = map(strokeVal, 0, 200, 0.7, 0.1);
+  ampLevel = map(strokeVal, 0, 100, 0.7, 0.1);
   wNoise.amp(ampLevel);
   // console.log(`strokeVal: ${strokeVal} ampLevel: ${ampLevel}`);
 
-  for (let i = 0; i < numDotsL; i++) {
+  for (let i = 0; i < numDots; i++) {
     boxL[i].renderL();
-  }
-  for (let i = 0; i < numDotsC; i++) {
     boxC[i].renderC();
-  }
-  for (let i = 0; i < numDotsR; i++) {
     boxR[i].renderR();
   }
 }
@@ -106,11 +102,25 @@ class Points {
   }
 }
 
+function solidSquares() {
+  let aL = Math.round(random(180, 210));
+  let aC = Math.round(random(180, 200));
+  let aR = Math.round(random(200, 210));
+
+  noStroke();
+  fill(245, 205, 205, aL);
+  rect(xMinL, yMin, boxW, boxH);
+  fill(205, 245, 205, aC);
+  rect(xMinC, yMin, boxW, boxH);
+  fill(205, 205, 245, aR);
+  rect(xMinR, yMin, boxW, boxH);
+}
+
 function noiseVal() {
   let noiseVal = 0;
   pOff = pOff + 0.001;
   noiseVal = noise(pOff);
-  colorVal = Math.round(map(noiseVal, 0, 1, 0, 200));
+  colorVal = Math.round(map(noiseVal, 0, 1, 0, 100));
   console.log(colorVal);
   return colorVal;
 }
