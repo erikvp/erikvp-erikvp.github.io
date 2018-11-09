@@ -1,125 +1,123 @@
 console.log("p5 sandbox");
-let osc1, osc2, osc3;
-let playing = false;
-// let width = 800;
+let width = screen.availWidth; // available width in browser
+let height = screen.availHeight; //available height in browser
+console.log(width, height);
 
-// let height = 800;
-let y = 400;
-let angle = 1;
-let timer = 0;
-let offset = 50;
+// array to store x-y coords of points for each box
+let boxL = [];
+let boxC = [];
+let boxR = [];
+
+// number of dots in each box
+let numDotsL = 100;
+let numDotsC = 100;
+let numDotsR = 100;
+
+let space = width / 10; // horizontal spacing
+let boxW = space * 2; // box width is 2 x space
+let boxH = boxW; // make a square x = h
+let yMin = height / 2 - boxH / 2; // vertically center the square
+let yMax = height / 2 + boxH / 2;
+
+console.log(boxW, boxH, space);
+console.log(yMin, yMax);
+
+// upper left & lower right x-y coords for each box
+let xMinL = space;
+let xMaxL = space + boxW;
+let xMinC = xMaxL + space;
+let xMaxC = xMinC + boxW;
+let xMinR = xMaxC + space;
+let xMaxR = xMinR + boxW;
+
+let pOff = 0; // counter for perlin noise generator
+let colorVal = 0;
+let strokeVal = 0;
+
+let wNoise;
+
+console.log(height, height / 2);
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
-  // createCanvas(width, height);
-  backgroundColor = 20;
-  textAlign(CENTER);
-  angleMode(DEGREES);
+  createCanvas(width, height);
 
-  osc1 = new p5.Oscillator();
-  delay1 = new p5.Delay();
-  osc1.setType("sine");
-  osc1.freq(200);
-  // osc1.amp(0);
-  osc1.amp(0.5, 0.05);
-  osc1.start();
-  // source, delayTime, feedback, filter frequency
-  delay1.process(osc1, 0.9, 0.4, 1800);
+  wNoise = new p5.Noise("white");
+  wNoise.start();
+  wNoise.amp(0.1);
 
-  osc2 = new p5.Oscillator();
-  delay2 = new p5.Delay();
-  osc2.setType("sine");
-  osc2.freq(400);
-  // osc2.amp(0);
-  osc2.amp(0.5, 0.05);
-  osc2.start();
-  // source, delayTime, feedback, filter frequency
-  delay2.process(osc2, 0.9, 0.4, 1800);
+  bgColor = color(20, 20, 20);
+  for (let i = 0; i < numDotsL; i++) {
+    let x = Math.round(random(xMinL, xMaxL)); // x-coord within left square
+    let y = Math.round(random(yMin, yMax)); // y-coord within left square
+    boxL.push(new Points(x, y));
+  }
 
-  osc3 = new p5.Oscillator();
-  delay3 = new p5.Delay();
-  osc3.setType("sine");
-  osc3.freq(300);
-  // osc2.amp(0);
-  osc3.amp(0.5, 0.05);
-  osc3.start();
-  // source, delayTime, feedback, filter frequency
-  delay3.process(osc3, 0.9, 0.4, 1800);
+  for (let i = 0; i < numDotsC; i++) {
+    let x = Math.round(random(xMinC, xMaxC)); // x-coord within center square
+    let y = Math.round(random(yMin, yMax)); // y-coord within center square
+    boxC.push(new Points(x, y));
+  }
+
+  for (let i = 0; i < numDotsR; i++) {
+    let x = Math.round(random(xMinR, xMaxR)); // x-coord within right square
+    let y = Math.round(random(yMin, yMax)); // y-coord within right square
+    boxR.push(new Points(x, y));
+  }
 }
 
 function draw() {
-  background(backgroundColor);
-  // text("click to play", width / 2, height / 2);
-  drawLines();
-  setFreq();
-  checkTimer();
-}
+  let ampLevel;
 
-function mouseClicked() {
-  if (!playing) {
-    // ramp amplitude to 0.5 over 0.05 seconds
-    osc1.amp(0.5, 0.05);
-    osc2.amp(0.5, 0.05);
-    osc3.amp(0.5, 0.05);
-    playing = true;
-    backgroundColor = color(10, 10, 10);
-  } else {
-    // ramp amplitude to 0 over 0.5 seconds
-    osc1.amp(0, 0.5);
-    osc2.amp(0, 0.5);
-    osc3.amp(0, 0.5);
-    playing = false;
-    backgroundColor = color(200, 10, 25);
+  background(bgColor);
+
+  strokeVal = noiseVal();
+  ampLevel = map(strokeVal, 0, 255, 0, 1);
+  wNoise.amp(ampLevel);
+  // console.log(`ampLevel: ${ampLevel}`);
+
+  for (let i = 0; i < numDotsL; i++) {
+    boxL[i].renderL();
+  }
+  for (let i = 0; i < numDotsC; i++) {
+    boxC[i].renderC();
+  }
+  for (let i = 0; i < numDotsR; i++) {
+    boxR[i].renderR();
   }
 }
 
-function setFreq() {
-  let freq1 = 200;
-  let freq2 = 400;
-  let freq3 = 300;
-
-  // freq1 = Math.round(map(mouseY, 0, height, 240, 100));
-  // osc1.freq(freq1);
-
-  freq3 = Math.round(
-    map(y, windowHeight / 2 - 50, windowHeight / 2 + 50, 200, 400)
-  );
-  osc3.freq(freq3);
-
-  console.log(`F1: ${freq1} F2: ${freq2} F3: ${freq3}`);
-}
-
-function drawLines() {
-  y = windowHeight / 2;
-  a = 0;
-  g = 255;
-
-  stroke(255);
-  line(0, windowHeight / 2 - 50, windowWidth, windowHeight / 2 - 50);
-  line(0, windowHeight / 2 + 50, windowWidth, windowHeight / 2 + 50);
-
-  y = sin(angle) * offset + windowHeight / 2;
-  if (angle >= 360) {
-    angle = 0;
-    offset = Math.round(random(40, 60));
-    console.log(`Offset: ${offset}`);
-  } else if (angle >= 88 && angle <= 92) {
-    angle += 0.03;
-    a = Math.round(random(200, 255));
-    g = 255;
-  } else if (angle >= 268 && angle <= 272) {
-    angle += 0.03;
-    a = Math.round(random(200, 255));
-    g = 255;
-  } else {
-    angle += 0.2;
-    a = Math.round(random(100, 180));
-    g = Math.round(random(150, 220));
-    console.log(`Angle: ${angle}  y: ${y}`);
+class Points {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+  renderL() {
+    stroke(strokeVal);
+    this.x = Math.round(random(xMinL, xMaxL));
+    this.y = Math.round(random(yMin, yMax));
+    point(this.x, this.y);
   }
 
-  stroke(20, g, 0, a);
-  line(0, y, width, y);
+  renderC() {
+    stroke(strokeVal);
+    this.x = Math.round(random(xMinC, xMaxC));
+    this.y = Math.round(random(yMin, yMax));
+    point(this.x, this.y);
+  }
+
+  renderR() {
+    stroke(strokeVal);
+    this.x = Math.round(random(xMinR, xMaxR));
+    this.y = Math.round(random(yMin, yMax));
+    point(this.x, this.y);
+  }
 }
 
-function checkTimer() {}
+function noiseVal() {
+  let noiseVal = 0;
+  pOff = pOff + 0.001;
+  noiseVal = noise(pOff);
+  colorVal = Math.round(map(noiseVal, 0, 1, 30, 255));
+  // console.log(colorVal);
+  return colorVal;
+}
