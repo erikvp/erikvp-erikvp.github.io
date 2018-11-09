@@ -1,7 +1,6 @@
 console.log("p5 sandbox");
 let width = window.innerWidth; // available width in browser
 let height = window.innerHeight; //available height in browser
-console.log(width, height);
 
 // array to store x-y coords of points for each box
 let boxL = [];
@@ -9,18 +8,15 @@ let boxC = [];
 let boxR = [];
 
 // number of dots in each box
-let numDotsL = 100;
-let numDotsC = 100;
-let numDotsR = 100;
+let numDotsL = 2000;
+let numDotsC = 2000;
+let numDotsR = 2000;
 
 let space = width / 10; // horizontal spacing
 let boxW = space * 2; // box width is 2 x space
 let boxH = boxW; // make a square x = h
 let yMin = height / 2 - boxH / 2; // vertically center the square
 let yMax = height / 2 + boxH / 2;
-
-console.log(boxW, boxH, space);
-console.log(yMin, yMax);
 
 // upper left & lower right x-y coords for each box
 let xMinL = space;
@@ -36,15 +32,13 @@ let strokeVal = 0;
 
 let wNoise;
 
-console.log(height, height / 2);
-
 function setup() {
   createCanvas(width, height);
 
   wNoise = new p5.Noise("white");
   wNoise.start();
 
-  bgColor = color(20, 20, 20);
+  bgColor = color(250, 250, 250);
   for (let i = 0; i < numDotsL; i++) {
     let x = Math.round(random(xMinL, xMaxL)); // x-coord within left square
     let y = Math.round(random(yMin, yMax)); // y-coord within left square
@@ -66,14 +60,13 @@ function setup() {
 
 function draw() {
   let ampLevel;
-  let rampUp = 0.5;
 
   background(bgColor);
 
   strokeVal = noiseVal();
-  ampLevel = map(strokeVal, 60, 255, 0.1, 0.7);
+  ampLevel = map(strokeVal, 0, 200, 0.7, 0.1);
   wNoise.amp(ampLevel);
-  console.log(`strokeVal: ${strokeVal} ampLevel: ${ampLevel}`);
+  // console.log(`strokeVal: ${strokeVal} ampLevel: ${ampLevel}`);
 
   for (let i = 0; i < numDotsL; i++) {
     boxL[i].renderL();
@@ -117,7 +110,7 @@ function noiseVal() {
   let noiseVal = 0;
   pOff = pOff + 0.001;
   noiseVal = noise(pOff);
-  colorVal = Math.round(map(noiseVal, 0, 1, 60, 255));
-  // console.log(colorVal);
+  colorVal = Math.round(map(noiseVal, 0, 1, 0, 200));
+  console.log(colorVal);
   return colorVal;
 }
