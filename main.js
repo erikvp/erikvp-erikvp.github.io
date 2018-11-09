@@ -1,6 +1,6 @@
 console.log("p5 sandbox");
-let width = screen.availWidth; // available width in browser
-let height = screen.availHeight; //available height in browser
+let width = window.innerWidth; // available width in browser
+let height = window.innerHeight; //available height in browser
 console.log(width, height);
 
 // array to store x-y coords of points for each box
@@ -43,7 +43,6 @@ function setup() {
 
   wNoise = new p5.Noise("white");
   wNoise.start();
-  wNoise.amp(0.1);
 
   bgColor = color(20, 20, 20);
   for (let i = 0; i < numDotsL; i++) {
@@ -67,13 +66,14 @@ function setup() {
 
 function draw() {
   let ampLevel;
+  let rampUp = 0.5;
 
   background(bgColor);
 
   strokeVal = noiseVal();
-  ampLevel = map(strokeVal, 0, 255, 0, 1);
+  ampLevel = map(strokeVal, 60, 255, 0.1, 0.7);
   wNoise.amp(ampLevel);
-  // console.log(`ampLevel: ${ampLevel}`);
+  console.log(`strokeVal: ${strokeVal} ampLevel: ${ampLevel}`);
 
   for (let i = 0; i < numDotsL; i++) {
     boxL[i].renderL();
@@ -117,7 +117,7 @@ function noiseVal() {
   let noiseVal = 0;
   pOff = pOff + 0.001;
   noiseVal = noise(pOff);
-  colorVal = Math.round(map(noiseVal, 0, 1, 30, 255));
+  colorVal = Math.round(map(noiseVal, 0, 1, 60, 255));
   // console.log(colorVal);
   return colorVal;
 }
