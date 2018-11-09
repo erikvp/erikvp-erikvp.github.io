@@ -8,9 +8,9 @@ let boxC = [];
 let boxR = [];
 
 // number of dots in each box
-let numDotsL = 2000;
-let numDotsC = 2000;
-let numDotsR = 2000;
+let numDotsL = width;
+let numDotsC = width;
+let numDotsR = width;
 
 let space = width / 10; // horizontal spacing
 let boxW = space * 2; // box width is 2 x space
