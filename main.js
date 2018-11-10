@@ -22,8 +22,8 @@ let xMinR = xMaxC + space;
 let xMaxR = xMinR + boxW;
 
 // number of dots in each box
-let div = 100;
-let numDots = (boxW * boxH) / div;
+let div = 200;
+let numDots = Math.round((boxW * boxH) / div);
 
 let pOff = 0; // counter for perlin noise generator
 let colorVal = 0;
@@ -81,24 +81,27 @@ class Points {
     this.y = y;
   }
   renderL() {
-    stroke(strokeVal);
+    noStroke();
+    fill(strokeVal);
     this.x = Math.round(random(xMinL, xMaxL));
     this.y = Math.round(random(yMin, yMax));
-    point(this.x, this.y);
+    rect(this.x, this.y, 2, 2);
   }
 
   renderC() {
-    stroke(strokeVal);
+    noStroke();
+    fill(strokeVal);
     this.x = Math.round(random(xMinC, xMaxC));
     this.y = Math.round(random(yMin, yMax));
-    point(this.x, this.y);
+    rect(this.x, this.y, 2, 2);
   }
 
   renderR() {
-    stroke(strokeVal);
+    noStroke();
+    fill(strokeVal);
     this.x = Math.round(random(xMinR, xMaxR));
     this.y = Math.round(random(yMin, yMax));
-    point(this.x, this.y);
+    rect(this.x, this.y, 2, 2);
   }
 }
 
