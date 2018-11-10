@@ -112,14 +112,17 @@ function solidSquares() {
   let aR = Math.round(random(200, 210));
 
   noStroke();
+
   fill(232, 68, 15, 215);
-  rect(xMinL - 50, yMin - 200, boxW * 4, boxH * 1.5);
+  rect(xMinL - space / 2, yMin - space, boxW * 3.75, boxH * 1);
   fill(255, 219, 39, aL);
   rect(xMinL, yMin, boxW, boxH);
   fill(51, 255, 55, aC);
   rect(xMinC, yMin, boxW, boxH);
   fill(51, 238, 255, aR);
   rect(xMinR, yMin, boxW, boxH);
+  fill(20);
+  ellipse(xMinL, yMin - space / 2, 40, 40);
 }
 
 function noiseVal() {
