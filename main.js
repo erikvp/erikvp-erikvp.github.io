@@ -122,7 +122,7 @@ function solidSquares() {
   fill(51, 238, 255, aR);
   rect(xMinR, yMin, boxW, boxH);
   fill(20);
-  ellipse(xMinL, yMin - space / 2, 40, 40);
+  ellipse(xMinL, yMin - space / 2, space / 3, space / 3);
 }
 
 function noiseVal() {
