@@ -22,7 +22,7 @@ let xMinR = xMaxC + space;
 let xMaxR = xMinR + boxW;
 
 // number of dots in each box
-let div = 200;
+let div = 100;
 let numDots = Math.round((boxW * boxH) / div);
 
 let pOff = 0; // counter for perlin noise generator
@@ -79,13 +79,14 @@ class Points {
   constructor(x, y) {
     this.x = x;
     this.y = y;
+    this.wh = 1;
   }
   renderL() {
     noStroke();
     fill(strokeVal);
     this.x = Math.round(random(xMinL, xMaxL));
     this.y = Math.round(random(yMin, yMax));
-    rect(this.x, this.y, 2, 2);
+    rect(this.x, this.y, this.wh, this.wh);
   }
 
   renderC() {
@@ -93,7 +94,7 @@ class Points {
     fill(strokeVal);
     this.x = Math.round(random(xMinC, xMaxC));
     this.y = Math.round(random(yMin, yMax));
-    rect(this.x, this.y, 2, 2);
+    rect(this.x, this.y, this.wh, this.wh);
   }
 
   renderR() {
@@ -101,21 +102,23 @@ class Points {
     fill(strokeVal);
     this.x = Math.round(random(xMinR, xMaxR));
     this.y = Math.round(random(yMin, yMax));
-    rect(this.x, this.y, 2, 2);
+    rect(this.x, this.y, this.wh, this.wh);
   }
 }
 
 function solidSquares() {
-  let aL = Math.round(random(180, 210));
+  let aL = Math.round(random(170, 190));
   let aC = Math.round(random(180, 200));
   let aR = Math.round(random(200, 210));
 
   noStroke();
-  fill(245, 205, 205, aL);
+  fill(232, 68, 15, 215);
+  rect(xMinL - 50, yMin - 200, boxW * 4, boxH * 1.5);
+  fill(255, 219, 39, aL);
   rect(xMinL, yMin, boxW, boxH);
-  fill(205, 245, 205, aC);
+  fill(51, 255, 55, aC);
   rect(xMinC, yMin, boxW, boxH);
-  fill(205, 205, 245, aR);
+  fill(51, 238, 255, aR);
   rect(xMinR, yMin, boxW, boxH);
 }
 
