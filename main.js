@@ -69,13 +69,12 @@ function setup() {
 }
 
 function draw() {
-  let ampLevel;
+  let ampLevel = 0.1;
 
   background(bgColor);
   solidSquares();
 
   strokeVal = noiseVal();
-  ampLevel = map(strokeVal, 0, 100, 0.5, 0.1);
   wNoise.amp(ampLevel);
   // console.log(`strokeVal: ${strokeVal} ampLevel: ${ampLevel}`);
 
