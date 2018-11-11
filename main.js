@@ -46,7 +46,7 @@ function setup() {
   delay1 = new p5.Delay();
   wNoise.start();
   // source, delayTime, feedback, filter frequency
-  delay1.process(wNoise, 0.9, 0.9, 5000);
+  delay1.process(wNoise, 0.9, 0.9, 3000);
 
   bgColor = color(250, 250, 250);
   for (let i = 0; i < numDots; i++) {
