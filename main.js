@@ -6,10 +6,17 @@ let height = window.innerHeight; //available height in browser
 let boxL = [];
 let boxC = [];
 let boxR = [];
+let boxH;
 
 let space = width / 10; // horizontal spacing
 let boxW = space * 2; // box width is 2 x space
-let boxH = boxW; // make a square x = h
+
+if (width > height) {
+  boxH = boxW; // make a square x = h
+} else {
+  boxH = boxW * 2;
+}
+
 let yMin = height / 2 - boxH / 2; // vertically center the square
 let yMax = height / 2 + boxH / 2;
 
@@ -22,7 +29,7 @@ let xMinR = xMaxC + space;
 let xMaxR = xMinR + boxW;
 
 // number of dots in each box
-let div = 100;
+let div = width * 1.5;
 let numDots = Math.round((boxW * boxH) / div);
 
 let pOff = 0; // counter for perlin noise generator
@@ -33,9 +40,13 @@ let wNoise;
 
 function setup() {
   createCanvas(width, height);
+  frameRate(10);
 
   wNoise = new p5.Noise("white");
+  delay1 = new p5.Delay();
   wNoise.start();
+  // source, delayTime, feedback, filter frequency
+  delay1.process(wNoise, 0.9, 0.9, 5000);
 
   bgColor = color(250, 250, 250);
   for (let i = 0; i < numDots; i++) {
@@ -64,7 +75,7 @@ function draw() {
   solidSquares();
 
   strokeVal = noiseVal();
-  ampLevel = map(strokeVal, 0, 100, 0.7, 0.1);
+  ampLevel = map(strokeVal, 0, 100, 0.5, 0.1);
   wNoise.amp(ampLevel);
   // console.log(`strokeVal: ${strokeVal} ampLevel: ${ampLevel}`);
 
@@ -79,14 +90,15 @@ class Points {
   constructor(x, y) {
     this.x = x;
     this.y = y;
-    this.wh = 1;
+    this.w = Math.round(random(boxW / 20, boxW / 10));
+    this.h = Math.round(random(boxH / 20, boxH / 3));
   }
   renderL() {
     noStroke();
     fill(strokeVal);
     this.x = Math.round(random(xMinL, xMaxL));
     this.y = Math.round(random(yMin, yMax));
-    rect(this.x, this.y, this.wh, this.wh);
+    rect(this.x, this.y, this.w, this.h);
   }
 
   renderC() {
@@ -94,7 +106,7 @@ class Points {
     fill(strokeVal);
     this.x = Math.round(random(xMinC, xMaxC));
     this.y = Math.round(random(yMin, yMax));
-    rect(this.x, this.y, this.wh, this.wh);
+    rect(this.x, this.y, this.w, this.h);
   }
 
   renderR() {
@@ -102,7 +114,7 @@ class Points {
     fill(strokeVal);
     this.x = Math.round(random(xMinR, xMaxR));
     this.y = Math.round(random(yMin, yMax));
-    rect(this.x, this.y, this.wh, this.wh);
+    rect(this.x, this.y, this.w, this.h);
   }
 }
 
@@ -111,18 +123,20 @@ function solidSquares() {
   let aC = Math.round(random(180, 200));
   let aR = Math.round(random(200, 210));
 
-  noStroke();
+  // noStroke();
 
-  fill(232, 68, 15, 215);
-  rect(xMinL - space / 2, yMin - space, boxW * 3.75, boxH * 1);
-  fill(255, 219, 39, aL);
+  // fill(232, 68, 15, 215);
+  // rect(xMinL - space / 2, yMin - space, boxW * 3.75, boxH * 1);
+  noFill();
+  stroke(5, 10);
   rect(xMinL, yMin, boxW, boxH);
-  fill(51, 255, 55, aC);
+  stroke(5, 10);
   rect(xMinC, yMin, boxW, boxH);
-  fill(51, 238, 255, aR);
+  noFill();
+  stroke(5, 10);
   rect(xMinR, yMin, boxW, boxH);
-  fill(20);
-  ellipse(xMinL, yMin - space / 2, space / 3, space / 3);
+  // fill(20);
+  // ellipse(xMinL, yMin - space / 2, space / 3, space / 3);
 }
 
 function noiseVal() {
