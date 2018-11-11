@@ -1,4 +1,6 @@
-console.log("Noise amplitude ramp time");
+console.log(
+  "Revisions: reduced delay feedback, set amp to 0.1 before delay, no square outlines"
+);
 let width = window.innerWidth; // available width in browser
 let height = window.innerHeight; //available height in browser
 
@@ -45,9 +47,9 @@ function setup() {
   wNoise = new p5.Noise("white");
   delay1 = new p5.Delay();
   wNoise.start();
-
+  wNoise.amp(0.1);
   // source, delayTime, feedback, filter frequency
-  delay1.process(wNoise, 0.9, 0.9, 3000);
+  delay1.process(wNoise, 0.9, 0.7, 3000);
 
   bgColor = color(250, 250, 250);
   for (let i = 0; i < numDots; i++) {
@@ -71,11 +73,8 @@ function setup() {
 
 function draw() {
   background(bgColor);
-  solidSquares();
 
   strokeVal = noiseVal();
-  wNoise.amp(0.1, 5, 1);
-  // console.log(`strokeVal: ${strokeVal} ampLevel: ${ampLevel}`);
 
   for (let i = 0; i < numDots; i++) {
     boxL[i].renderL();
@@ -114,27 +113,6 @@ class Points {
     this.y = Math.round(random(yMin, yMax));
     rect(this.x, this.y, this.w, this.h);
   }
-}
-
-function solidSquares() {
-  let aL = Math.round(random(170, 190));
-  let aC = Math.round(random(180, 200));
-  let aR = Math.round(random(200, 210));
-
-  // noStroke();
-
-  // fill(232, 68, 15, 215);
-  // rect(xMinL - space / 2, yMin - space, boxW * 3.75, boxH * 1);
-  noFill();
-  stroke(5, 10);
-  rect(xMinL, yMin, boxW, boxH);
-  stroke(5, 10);
-  rect(xMinC, yMin, boxW, boxH);
-  noFill();
-  stroke(5, 10);
-  rect(xMinR, yMin, boxW, boxH);
-  // fill(20);
-  // ellipse(xMinL, yMin - space / 2, space / 3, space / 3);
 }
 
 function noiseVal() {
