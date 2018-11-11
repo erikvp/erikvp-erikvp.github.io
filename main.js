@@ -45,6 +45,7 @@ function setup() {
   wNoise = new p5.Noise("white");
   delay1 = new p5.Delay();
   wNoise.start();
+
   // source, delayTime, feedback, filter frequency
   delay1.process(wNoise, 0.9, 0.9, 3000);
 
@@ -69,13 +70,11 @@ function setup() {
 }
 
 function draw() {
-  let ampLevel = 0.1;
-
   background(bgColor);
   solidSquares();
 
   strokeVal = noiseVal();
-  wNoise.amp(ampLevel);
+  wNoise.amp(0.1, 5, 1);
   // console.log(`strokeVal: ${strokeVal} ampLevel: ${ampLevel}`);
 
   for (let i = 0; i < numDots; i++) {
