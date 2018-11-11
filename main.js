@@ -1,4 +1,4 @@
-console.log("p5 sandbox");
+console.log("Noise amplitude ramp time");
 let width = window.innerWidth; // available width in browser
 let height = window.innerHeight; //available height in browser
 
