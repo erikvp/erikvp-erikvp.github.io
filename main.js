@@ -1,6 +1,4 @@
-console.log(
-  "Revisions: reduced delay feedback, set amp to 0.1 before delay, no square outlines"
-);
+console.log("Revisions: Bandpass filter, alpha for noise");
 let width = window.innerWidth; // available width in browser
 let height = window.innerHeight; //available height in browser
 
@@ -35,8 +33,12 @@ let div = width * 1.5;
 let numDots = Math.round((boxW * boxH) / div);
 
 let pOff = 0; // counter for perlin noise generator
+let fOff = 0; // counter for perlin noise generator
+
 let colorVal = 0;
 let strokeVal = 0;
+let filterVal = 0;
+let filterFreq = 0;
 
 let wNoise;
 
@@ -46,10 +48,17 @@ function setup() {
 
   wNoise = new p5.Noise("white");
   delay1 = new p5.Delay();
+  bpFilter = new p5.BandPass();
   wNoise.start();
-  wNoise.amp(0.1);
+  wNoise.amp(0.5);
+
   // source, delayTime, feedback, filter frequency
   delay1.process(wNoise, 0.9, 0.7, 3000);
+
+  wNoise.disconnect();
+  wNoise.connect(bpFilter);
+  // set bandpass filter parameters  center, bandwidth
+  bpFilter.set(2200, 1000);
 
   bgColor = color(250, 250, 250);
   for (let i = 0; i < numDots; i++) {
@@ -75,6 +84,8 @@ function draw() {
   background(bgColor);
 
   strokeVal = noiseVal();
+  filterFreq = setFilter();
+  bpFilter.set(filterFreq, 1000);
 
   for (let i = 0; i < numDots; i++) {
     boxL[i].renderL();
@@ -91,35 +102,49 @@ class Points {
     this.h = Math.round(random(boxH / 20, boxH / 3));
   }
   renderL() {
+    let aL = Math.round(random(50, 220));
     noStroke();
-    fill(strokeVal);
+    fill(strokeVal, aL);
     this.x = Math.round(random(xMinL, xMaxL));
     this.y = Math.round(random(yMin, yMax));
     rect(this.x, this.y, this.w, this.h);
   }
 
   renderC() {
+    let aC = Math.round(random(120, 200));
+
     noStroke();
-    fill(strokeVal);
+    fill(strokeVal, aC);
     this.x = Math.round(random(xMinC, xMaxC));
     this.y = Math.round(random(yMin, yMax));
     rect(this.x, this.y, this.w, this.h);
   }
 
   renderR() {
+    let aR = Math.round(random(100, 255));
+
     noStroke();
-    fill(strokeVal);
+    fill(strokeVal, aR);
     this.x = Math.round(random(xMinR, xMaxR));
     this.y = Math.round(random(yMin, yMax));
     rect(this.x, this.y, this.w, this.h);
   }
 }
 
+function setFilter() {
+  let filterVal = 0;
+  fOff = fOff + 0.001;
+  filterVal = noise(fOff);
+  filterVal = Math.round(map(filterVal, 0, 1, 1000, 1300));
+  console.log(filterVal);
+  return filterVal;
+}
+
 function noiseVal() {
   let noiseVal = 0;
   pOff = pOff + 0.001;
   noiseVal = noise(pOff);
-  colorVal = Math.round(map(noiseVal, 0, 1, 0, 100));
+  colorVal = Math.round(map(noiseVal, 0, 1, 0, 50));
   console.log(colorVal);
   return colorVal;
 }
