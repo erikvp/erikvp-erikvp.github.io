@@ -1,4 +1,4 @@
-console.log("Revisions: Bandpass filter, alpha for noise");
+console.log("Revisions: Removed alpha for noise blocks");
 let width = window.innerWidth; // available width in browser
 let height = window.innerHeight; //available height in browser
 
@@ -102,29 +102,24 @@ class Points {
     this.h = Math.round(random(boxH / 20, boxH / 3));
   }
   renderL() {
-    let aL = Math.round(random(50, 220));
     noStroke();
-    fill(strokeVal, aL);
+    fill(strokeVal);
     this.x = Math.round(random(xMinL, xMaxL));
     this.y = Math.round(random(yMin, yMax));
     rect(this.x, this.y, this.w, this.h);
   }
 
   renderC() {
-    let aC = Math.round(random(120, 200));
-
     noStroke();
-    fill(strokeVal, aC);
+    fill(strokeVal);
     this.x = Math.round(random(xMinC, xMaxC));
     this.y = Math.round(random(yMin, yMax));
     rect(this.x, this.y, this.w, this.h);
   }
 
   renderR() {
-    let aR = Math.round(random(100, 255));
-
     noStroke();
-    fill(strokeVal, aR);
+    fill(strokeVal);
     this.x = Math.round(random(xMinR, xMaxR));
     this.y = Math.round(random(yMin, yMax));
     rect(this.x, this.y, this.w, this.h);
