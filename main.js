@@ -1,145 +1,121 @@
-console.log("Revisions: Removed alpha for noise blocks");
-let width = window.innerWidth; // available width in browser
-let height = window.innerHeight; //available height in browser
+console.log("Revisions: Cow");
+// A bright green cow. I can hear it screaming. I'm hungry for spinach
 
-// array to store x-y coords of points for each box
-let boxL = [];
-let boxC = [];
-let boxR = [];
-let boxH;
+let width = window.innerWidth;
+let height = window.innerHeight;
 
-let space = width / 10; // horizontal spacing
-let boxW = space * 2; // box width is 2 x space
-
-if (width > height) {
-  boxH = boxW; // make a square x = h
+if (window.innerWidth > window.innerHeight) {
+  width = height; // available width in browser
 } else {
-  boxH = boxW * 2;
+  height = width;
 }
 
-let yMin = height / 2 - boxH / 2; // vertically center the square
-let yMax = height / 2 + boxH / 2;
+// array to store rgb values for each pixel block
+let whiteArr = [];
 
-// upper left & lower right x-y coords for each box
-let xMinL = space;
-let xMaxL = space + boxW;
-let xMinC = xMaxL + space;
-let xMaxC = xMinC + boxW;
-let xMinR = xMaxC + space;
-let xMaxR = xMinR + boxW;
+let pixelRow = 20;
+let pixelHeight = 20;
+let pixelW = Math.round(width / pixelRow); // width of each pixel block
+let pixelH = Math.round(height / pixelHeight); // height of each pixel block
+let pixelQty = pixelRow * pixelHeight; //total number of pixels
 
-// number of dots in each box
-let div = width * 1.5;
-let numDots = Math.round((boxW * boxH) / div);
-
-let pOff = 0; // counter for perlin noise generator
-let fOff = 0; // counter for perlin noise generator
-
-let colorVal = 0;
-let strokeVal = 0;
-let filterVal = 0;
-let filterFreq = 0;
-
-let wNoise;
+let cowImg;
+function preload() {
+  cowImg = loadImage("assets/cow800.jpg");
+}
 
 function setup() {
   createCanvas(width, height);
-  frameRate(10);
-
-  wNoise = new p5.Noise("white");
-  delay1 = new p5.Delay();
-  bpFilter = new p5.BandPass();
-  wNoise.start();
-  wNoise.amp(0.5);
-
-  // source, delayTime, feedback, filter frequency
-  delay1.process(wNoise, 0.9, 0.7, 3000);
-
-  wNoise.disconnect();
-  wNoise.connect(bpFilter);
-  // set bandpass filter parameters  center, bandwidth
-  bpFilter.set(2200, 1000);
-
-  bgColor = color(250, 250, 250);
-  for (let i = 0; i < numDots; i++) {
-    let x = Math.round(random(xMinL, xMaxL)); // x-coord within left square
-    let y = Math.round(random(yMin, yMax)); // y-coord within left square
-    boxL.push(new Points(x, y));
-  }
-
-  for (let i = 0; i < numDots; i++) {
-    let x = Math.round(random(xMinC, xMaxC)); // x-coord within center square
-    let y = Math.round(random(yMin, yMax)); // y-coord within center square
-    boxC.push(new Points(x, y));
-  }
-
-  for (let i = 0; i < numDots; i++) {
-    let x = Math.round(random(xMinR, xMaxR)); // x-coord within right square
-    let y = Math.round(random(yMin, yMax)); // y-coord within right square
-    boxR.push(new Points(x, y));
-  }
+  // imageMode(CENTER);
 }
 
 function draw() {
-  background(bgColor);
+  background(255);
+  let delta = 4;
+  frameRate(5);
+  image(cowImg, 0, 0, width, height);
 
-  strokeVal = noiseVal();
-  filterFreq = setFilter();
-  bpFilter.set(filterFreq, 1000);
+  for (let y = 0; y < pixelHeight; y++) {
+    for (let x = 0; x < pixelRow; x++) {
+      // top green rectangle covering cow
+      if (y >= 7 && y <= 10 && x >= 5 && x <= 15) {
+        let center = Math.round(random(240, 251));
+        let r = 20;
+        let g = Math.round(random(center - delta, center + delta));
+        let b = 20;
 
-  for (let i = 0; i < numDots; i++) {
-    boxL[i].renderL();
-    boxC[i].renderC();
-    boxR[i].renderR();
+        let a = Math.round(random(100, 150));
+        let x0 = x * pixelW;
+        let y0 = y * pixelH;
+        whiteArr.push(new pixelBlock(r, g, b, a, x0, y0));
+
+        // bottom green rectangle covering cow
+      } else if (y >= 11 && y <= 14 && x >= 4 && x <= 14) {
+        let center = Math.round(random(240, 251));
+        let r = 20;
+        let g = Math.round(random(center - delta, center + delta));
+        let b = 20;
+
+        let a = Math.round(random(100, 150));
+        let x0 = x * pixelW;
+        let y0 = y * pixelH;
+        whiteArr.push(new pixelBlock(r, g, b, a, x0, y0));
+
+        // white rectangles covering rest of image surrounding cow
+      } else {
+        let center = Math.round(random(240, 251));
+        let r = Math.round(random(center - delta, center + delta));
+        let g = r;
+        let b = r;
+        let a = Math.round(random(20, 50));
+        let x0 = x * pixelW;
+        let y0 = y * pixelH;
+        whiteArr.push(new pixelBlock(r, g, b, a, x0, y0));
+      }
+    }
+  }
+  // console.table(whiteArr);
+
+  for (let i = 0; i < pixelQty; i++) {
+    whiteArr[i].renderPixels();
+  }
+  whiteArr.length = 0;
+  renderText();
+}
+
+class pixelBlock {
+  constructor(r, g, b, a, x0, y0) {
+    this.r = r;
+    this.g = g;
+    this.b = b;
+    this.a = a;
+    this.x0 = x0;
+    this.y0 = y0;
+  }
+  renderPixels() {
+    noStroke();
+    fill(this.r, this.g, this.b, this.a);
+    rect(this.x0, this.y0, pixelW, pixelH);
   }
 }
 
-class Points {
-  constructor(x, y) {
-    this.x = x;
-    this.y = y;
-    this.w = Math.round(random(boxW / 20, boxW / 10));
-    this.h = Math.round(random(boxH / 20, boxH / 3));
-  }
-  renderL() {
-    noStroke();
-    fill(strokeVal);
-    this.x = Math.round(random(xMinL, xMaxL));
-    this.y = Math.round(random(yMin, yMax));
-    rect(this.x, this.y, this.w, this.h);
-  }
+function renderText() {
+  let fontSize = Math.round(width / 20);
+  let line1x = pixelW * 2;
+  let line1y = pixelH * 4;
+  let line2x = pixelW * 3;
+  let line2y = pixelH * 5.5;
+  let line3x = pixelW * 6;
+  let line3y = pixelH * 14.5;
 
-  renderC() {
-    noStroke();
-    fill(strokeVal);
-    this.x = Math.round(random(xMinC, xMaxC));
-    this.y = Math.round(random(yMin, yMax));
-    rect(this.x, this.y, this.w, this.h);
-  }
+  fill(240, 200);
+  rect(pixelW * 2, pixelH * 3, pixelW * 11, pixelH * 3);
 
-  renderR() {
-    noStroke();
-    fill(strokeVal);
-    this.x = Math.round(random(xMinR, xMaxR));
-    this.y = Math.round(random(yMin, yMax));
-    rect(this.x, this.y, this.w, this.h);
-  }
-}
-
-function setFilter() {
-  let filterVal = 0;
-  fOff = fOff + 0.001;
-  filterVal = noise(fOff);
-  filterVal = Math.round(map(filterVal, 0, 1, 1000, 1300));
-  console.log(filterVal);
-  return filterVal;
-}
-
-function noiseVal() {
-  let noiseVal = 0;
-  pOff = pOff + 0.001;
-  noiseVal = noise(pOff);
-  colorVal = Math.round(map(noiseVal, 0, 1, 0, 50));
-  console.log(colorVal);
-  return colorVal;
+  noStroke();
+  fill(40);
+  textSize(fontSize);
+  textFont("VT323");
+  text(" A bright green C0W", line1x, line1y);
+  text("I can hear it  SCREAMING", line2x, line2y);
+  text("I'm hungry for SPINACH", line3x, line3y);
 }
