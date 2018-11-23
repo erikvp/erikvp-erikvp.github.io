@@ -21,7 +21,7 @@ let pixelQty = pixelRow * pixelHeight; //total number of pixels
 
 let cowImg;
 function preload() {
-  cowImg = loadImage("assets/cow800.jpg");
+  cowImg = loadImage("../assets/cow800.jpg");
 }
 
 function setup() {
