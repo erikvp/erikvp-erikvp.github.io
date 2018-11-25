@@ -116,6 +116,6 @@ function renderText() {
   textSize(fontSize);
   textFont("VT323");
   text(" A bright green C0W", line1x, line1y);
-  text("I can hear it  SCREAMING", line2x, line2y);
+  text("Can you hear it SCREAMING?", line2x, line2y);
   text("I'm hungry for SPINACH", line3x, line3y);
 }
