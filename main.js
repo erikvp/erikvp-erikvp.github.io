@@ -103,7 +103,7 @@ function renderText() {
   let fontSize = Math.round(width / 20);
   let line1x = pixelW * 2;
   let line1y = pixelH * 4;
-  let line2x = pixelW * 3;
+  let line2x = pixelW * 4;
   let line2y = pixelH * 5.5;
   let line3x = pixelW * 6;
   let line3y = pixelH * 14.5;
@@ -116,6 +116,6 @@ function renderText() {
   textSize(fontSize);
   textFont("VT323");
   text(" A bright green C0W", line1x, line1y);
-  text("Can you hear it SCREAMING?", line2x, line2y);
+  text("Listen to it SCREAMING", line2x, line2y);
   text("I'm hungry for SPINACH", line3x, line3y);
 }
