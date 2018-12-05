@@ -1,5 +1,4 @@
-console.log("Revisions: Cow");
-// A bright green cow. I can hear it screaming. I'm hungry for spinach
+console.log("Revisions: Pixel Canvas Matrix");
 
 let width = window.innerWidth;
 let height = window.innerHeight;
@@ -10,112 +9,139 @@ if (window.innerWidth > window.innerHeight) {
   height = width;
 }
 
-// array to store rgb values for each pixel block
-let whiteArr = [];
+let fNum = 0; // file number
+let loopNum = 1;
 
-let pixelRow = 20;
-let pixelHeight = 20;
-let pixelW = Math.round(width / pixelRow); // width of each pixel block
-let pixelH = Math.round(height / pixelHeight); // height of each pixel block
-let pixelQty = pixelRow * pixelHeight; //total number of pixels
-
-let cowImg;
-function preload() {
-  cowImg = loadImage("../assets/cow800.jpg");
-}
+let pixelCanvasRow = 10; // number of canvases per row
+let pixelCanvasCol = 10; // number of canvases per column
+let pixelsRow = 20;
+let pixelsCol = 20;
+let pixelCanvasW = Math.round(width / pixelCanvasRow); // pixel canvas width
+let pixelCanvasH = Math.round(height / pixelCanvasCol); // pixel canvas height
+let pixelW = Math.round(pixelCanvasW / pixelsRow); // pixel width
+let pixelH = Math.round(pixelCanvasH / pixelsCol); // pixel height
+console.log(`pixelW: ${pixelW}, pixelH: ${pixelH}`);
 
 function setup() {
   createCanvas(width, height);
-  // imageMode(CENTER);
+  frameRate(1);
+  // noLoop();
 }
 
 function draw() {
-  background(255);
-  let delta = 4;
-  frameRate(5);
-  image(cowImg, 0, 0, width, height);
+  // let r = Math.round(random(0, 255));
+  // let g = Math.round(random(0, 255));
+  // let b = Math.round(random(0, 255));
+  background(250);
 
-  for (let y = 0; y < pixelHeight; y++) {
-    for (let x = 0; x < pixelRow; x++) {
-      // top green rectangle covering cow
-      if (y >= 7 && y <= 10 && x >= 5 && x <= 15) {
-        let center = Math.round(random(240, 251));
-        let r = 20;
-        let g = Math.round(random(center - delta, center + delta));
-        let b = 20;
+  //let delta = 4;
+  for (let y = 0; y < pixelCanvasW * pixelCanvasCol; y += pixelCanvasW) {
+    for (let x = 0; x < pixelCanvasH * pixelCanvasRow; x += pixelCanvasH) {
+      renderStripe1(x, y);
+      renderStripe2(x, y);
+      renderStripe3(x, y);
+      mask(x, y);
+    }
+  }
 
-        let a = Math.round(random(100, 150));
-        let x0 = x * pixelW;
-        let y0 = y * pixelH;
-        whiteArr.push(new pixelBlock(r, g, b, a, x0, y0));
+  // saveCanvas("b" + fNum, "png");
+  // fNum++;
 
-        // bottom green rectangle covering cow
-      } else if (y >= 11 && y <= 14 && x >= 4 && x <= 14) {
-        let center = Math.round(random(240, 251));
-        let r = 20;
-        let g = Math.round(random(center - delta, center + delta));
-        let b = 20;
+  // if (loopNum >= 10) {
+  //   noLoop();
+  //   console.log("END");
+  // } else {
+  //   loopNum++;
+  // }
+}
 
-        let a = Math.round(random(100, 150));
-        let x0 = x * pixelW;
-        let y0 = y * pixelH;
-        whiteArr.push(new pixelBlock(r, g, b, a, x0, y0));
+function renderStripe1(cX, cY) {
+  let r = Math.round(random(0, 255));
+  let g = Math.round(random(0, 255));
+  let b = Math.round(random(0, 255));
+  let a = Math.round(random(200, 255));
+  let xW = Math.round(random(1, 15));
+  let x0 = pixelW * Math.round(random(0, 19 - xW));
+  let x1 = x0 + pixelW * xW;
 
-        // white rectangles covering rest of image surrounding cow
-      } else {
-        let center = Math.round(random(240, 251));
-        let r = Math.round(random(center - delta, center + delta));
-        let g = r;
-        let b = r;
-        let a = Math.round(random(20, 50));
-        let x0 = x * pixelW;
-        let y0 = y * pixelH;
-        whiteArr.push(new pixelBlock(r, g, b, a, x0, y0));
+  console.log(`xW: ${xW} x0: ${x0} x1: ${x1}`);
+  fill(r, g, b, 255);
+  rect(cX, cY, pixelCanvasW, pixelCanvasH);
+
+  r = Math.round(random(0, 255));
+  g = Math.round(random(0, 255));
+  b = Math.round(random(0, 255));
+  // Rows 0 - 6
+  for (let y = pixelH * 0; y < pixelH * 6; y += pixelH) {
+    for (let x = x0; x < x1; x += pixelW) {
+      let pixel = Math.round(random(1, 10));
+      // displays 30% of pixels
+      if (pixel <= 3) {
+        noStroke();
+        fill(r, g, b, a);
+        rect(cX + x, cY + y, pixelW, pixelH);
+        // console.log(x, y, r, g, b, a);
       }
     }
   }
-  // console.table(whiteArr);
-
-  for (let i = 0; i < pixelQty; i++) {
-    whiteArr[i].renderPixels();
-  }
-  whiteArr.length = 0;
-  renderText();
 }
 
-class pixelBlock {
-  constructor(r, g, b, a, x0, y0) {
-    this.r = r;
-    this.g = g;
-    this.b = b;
-    this.a = a;
-    this.x0 = x0;
-    this.y0 = y0;
-  }
-  renderPixels() {
-    noStroke();
-    fill(this.r, this.g, this.b, this.a);
-    rect(this.x0, this.y0, pixelW, pixelH);
+function renderStripe2(cX, cY) {
+  let r = Math.round(random(0, 255));
+  let g = Math.round(random(0, 255));
+  let b = Math.round(random(0, 255));
+  let a = Math.round(random(200, 255));
+  let xW = Math.round(random(1, 15));
+  let x0 = pixelW * Math.round(random(0, 19 - xW));
+  let x1 = x0 + pixelW * xW;
+
+  for (let y = pixelH * 7; y < pixelH * 13; y += pixelH) {
+    for (let x = x0; x < x1; x += pixelW) {
+      let pixel = Math.round(random(1, 10));
+      if (pixel <= 3) {
+        noStroke();
+        fill(r, g, b, a);
+        rect(cX + x, cY + y, pixelW, pixelH);
+        // console.log(x, y, r, g, b, a);
+      }
+    }
   }
 }
 
-function renderText() {
-  let fontSize = Math.round(width / 20);
-  let line1x = pixelW * 2;
-  let line1y = pixelH * 4;
-  let line2x = pixelW * 4;
-  let line2y = pixelH * 5.5;
-  let line3x = pixelW * 6;
-  let line3y = pixelH * 14.5;
+function renderStripe3(cX, cY) {
+  let r = Math.round(random(0, 255));
+  let g = Math.round(random(0, 255));
+  let b = Math.round(random(0, 255));
+  let a = Math.round(random(200, 255));
+  let xW = Math.round(random(1, 15));
+  let x0 = pixelW * Math.round(random(0, 19 - xW));
+  let x1 = x0 + pixelW * xW;
 
-  fill(240, 200);
-  rect(pixelW * 2, pixelH * 3, pixelW * 11, pixelH * 3);
+  console.log(`STRIPE3 - xW: ${xW} x0: ${x0} x1: ${x1}`);
 
-  noStroke();
-  fill(40);
-  textSize(fontSize);
-  textFont("VT323");
-  text(" A bright green C0W", line1x, line1y);
-  text("Listen to it SCREAM", line2x, line2y);
-  text("I'm hungry for SPINACH", line3x, line3y);
+  for (let y = pixelH * 14; y < pixelH * 20; y += pixelH) {
+    for (let x = x0; x < x1; x += pixelW) {
+      let pixel = Math.round(random(1, 10));
+      if (pixel <= 3) {
+        noStroke();
+        fill(r, g, b, a);
+        rect(cX + x, cY + y, pixelW, pixelH);
+        console.log(x, y, r, g, b, a);
+      }
+    }
+  }
+}
+
+function mask(cX, cY) {
+  let maskNum = Math.round(random(0, 9));
+
+  if (maskNum < 3) {
+    fill(240, 255);
+    rect(cX, cY, pixelCanvasW, pixelCanvasH);
+    console.log(`whitemask @ ${cX} ${cY}`);
+  } else if (maskNum > 8) {
+    fill(20, 255);
+    rect(cX, cY, pixelCanvasW, pixelCanvasH);
+    console.log(`black mask @ ${cX} ${cY}`);
+  }
 }
