@@ -5,7 +5,7 @@ let pixBlock2 = [];
 
 function preload() {
   img = loadImage("assets/glitch.jpg");
-  img2 = loadImage("assets/collage.jpg");
+  img2 = loadImage("assets/video.jpg");
 }
 
 function setup() {
