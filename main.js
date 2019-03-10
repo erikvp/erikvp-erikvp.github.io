@@ -1,147 +1,102 @@
-console.log("Revisions: Pixel Canvas Matrix");
+console.log("p5 sandbox");
+let img, img2;
+let pixBlock = [];
+let pixBlock2 = [];
 
-let width = window.innerWidth;
-let height = window.innerHeight;
-
-if (window.innerWidth > window.innerHeight) {
-  width = height; // available width in browser
-} else {
-  height = width;
+function preload() {
+  img = loadImage("assets/glitch.jpg");
+  img2 = loadImage("assets/collage.jpg");
 }
 
-let fNum = 0; // file number
-let loopNum = 1;
-
-let pixelCanvasRow = 10; // number of canvases per row
-let pixelCanvasCol = 10; // number of canvases per column
-let pixelsRow = 20;
-let pixelsCol = 20;
-let pixelCanvasW = Math.round(width / pixelCanvasRow); // pixel canvas width
-let pixelCanvasH = Math.round(height / pixelCanvasCol); // pixel canvas height
-let pixelW = Math.round(pixelCanvasW / pixelsRow); // pixel width
-let pixelH = Math.round(pixelCanvasH / pixelsCol); // pixel height
-console.log(`pixelW: ${pixelW}, pixelH: ${pixelH}`);
-
 function setup() {
-  createCanvas(width, height);
-  frameRate(1);
+  createCanvas(840, 840);
+  pixelDensity(1);
+  frameRate(2);
+
   // noLoop();
 }
 
 function draw() {
-  // let r = Math.round(random(0, 255));
-  // let g = Math.round(random(0, 255));
-  // let b = Math.round(random(0, 255));
   background(250);
+  unmodifiedImage();
 
-  //let delta = 4;
-  for (let y = 0; y < pixelCanvasW * pixelCanvasCol; y += pixelCanvasW) {
-    for (let x = 0; x < pixelCanvasH * pixelCanvasRow; x += pixelCanvasH) {
-      renderStripe1(x, y);
-      renderStripe2(x, y);
-      renderStripe3(x, y);
-      mask(x, y);
-    }
-  }
-
-  // saveCanvas("b" + fNum, "png");
-  // fNum++;
-
-  // if (loopNum >= 10) {
-  //   noLoop();
-  //   console.log("END");
-  // } else {
-  //   loopNum++;
-  // }
+  setBlocks();
+  renderBlocks();
+  makeGrid();
+  // scrollLines();
 }
 
-function renderStripe1(cX, cY) {
-  let r = Math.round(random(0, 255));
-  let g = Math.round(random(0, 255));
-  let b = Math.round(random(0, 255));
-  let a = Math.round(random(200, 255));
-  let xW = Math.round(random(1, 15));
-  let x0 = pixelW * Math.round(random(0, 19 - xW));
-  let x1 = x0 + pixelW * xW;
+function makeGrid() {
+  imgH = 420;
+  imgW = 840;
+  gridW = imgW / 20;
+  gridH = imgH / 10;
 
-  console.log(`xW: ${xW} x0: ${x0} x1: ${x1}`);
-  fill(r, g, b, 255);
-  rect(cX, cY, pixelCanvasW, pixelCanvasH);
+  for (let y = 0; y < imgH; y += gridH) {
+    for (let x = 0; x < imgW; x += gridW) {
+      stroke(20);
+      line(x, 0, x, imgH);
+    }
+    line(0, y, imgW, y);
+  }
+}
 
-  r = Math.round(random(0, 255));
-  g = Math.round(random(0, 255));
-  b = Math.round(random(0, 255));
-  // Rows 0 - 6
-  for (let y = pixelH * 0; y < pixelH * 6; y += pixelH) {
-    for (let x = x0; x < x1; x += pixelW) {
-      let pixel = Math.round(random(1, 10));
-      // displays 30% of pixels
-      if (pixel <= 3) {
-        noStroke();
-        fill(r, g, b, a);
-        rect(cX + x, cY + y, pixelW, pixelH);
-        // console.log(x, y, r, g, b, a);
-      }
+function unmodifiedImage() {
+  img.loadPixels(); //Loads pixel data for the display window into the img.pixels[] array
+  image(img, 0, 0); //place img at x=0, y=0
+  img.updatePixels();
+
+  img2.loadPixels(); //Loads pixel data for the display window into the img2.pixels[] array
+  image(img2, 420, 0); //place img2 at x=420, y=0
+  img2.updatePixels();
+}
+
+function setBlocks() {
+  let i = 0;
+  let w = 42;
+  let h = 42;
+  let x2_0 = 420;
+
+  for (let y = 0; y < 10; y++) {
+    for (let x = 0; x < 10; x++) {
+      pixBlock[i] = img.get(w * x, h * y, w, h); // starting coord x0, y0, width, height
+      pixBlock2[i] = img2.get(w * x, h * y, w, h);
+      i++;
     }
   }
 }
 
-function renderStripe2(cX, cY) {
-  let r = Math.round(random(0, 255));
-  let g = Math.round(random(0, 255));
-  let b = Math.round(random(0, 255));
-  let a = Math.round(random(200, 255));
-  let xW = Math.round(random(1, 15));
-  let x0 = pixelW * Math.round(random(0, 19 - xW));
-  let x1 = x0 + pixelW * xW;
+function renderBlocks() {
+  let x0 = 0;
+  let y0 = 420;
+  let x2_0 = 420;
+  let y2_0 = 420;
+  let i = Math.floor(random(0, 100)); // random integer 0 to 99
 
-  for (let y = pixelH * 7; y < pixelH * 13; y += pixelH) {
-    for (let x = x0; x < x1; x += pixelW) {
-      let pixel = Math.round(random(1, 10));
-      if (pixel <= 3) {
-        noStroke();
-        fill(r, g, b, a);
-        rect(cX + x, cY + y, pixelW, pixelH);
-        // console.log(x, y, r, g, b, a);
-      }
+  for (let y = 0; y < 10; y++) {
+    for (let x = 0; x < 10; x++) {
+      pixBlock[i].loadPixels();
+      image(pixBlock[i], x0 + 42 * x, y0 + 42 * y);
+      pixBlock[i].updatePixels();
+
+      pixBlock2[i].loadPixels();
+      image(pixBlock2[i], x2_0 + 42 * x, y2_0 + 42 * y);
+      pixBlock2[i].updatePixels();
+
+      // i = Math.floor(random(0, 100));
     }
   }
 }
 
-function renderStripe3(cX, cY) {
-  let r = Math.round(random(0, 255));
-  let g = Math.round(random(0, 255));
-  let b = Math.round(random(0, 255));
-  let a = Math.round(random(200, 255));
-  let xW = Math.round(random(1, 15));
-  let x0 = pixelW * Math.round(random(0, 19 - xW));
-  let x1 = x0 + pixelW * xW;
+function scrollLines() {
+  let a = Math.round(random(20, 50));
+  strokeWeight(1);
 
-  console.log(`STRIPE3 - xW: ${xW} x0: ${x0} x1: ${x1}`);
-
-  for (let y = pixelH * 14; y < pixelH * 20; y += pixelH) {
-    for (let x = x0; x < x1; x += pixelW) {
-      let pixel = Math.round(random(1, 10));
-      if (pixel <= 3) {
-        noStroke();
-        fill(r, g, b, a);
-        rect(cX + x, cY + y, pixelW, pixelH);
-        console.log(x, y, r, g, b, a);
-      }
-    }
-  }
-}
-
-function mask(cX, cY) {
-  let maskNum = Math.round(random(0, 9));
-
-  if (maskNum < 3) {
-    fill(240, 255);
-    rect(cX, cY, pixelCanvasW, pixelCanvasH);
-    console.log(`whitemask @ ${cX} ${cY}`);
-  } else if (maskNum > 8) {
-    fill(20, 255);
-    rect(cX, cY, pixelCanvasW, pixelCanvasH);
-    console.log(`black mask @ ${cX} ${cY}`);
+  if (cy < height / 2) {
+    stroke(220, 220, 230, a);
+    line(420, cy, 840, cy);
+    cy += Math.round(random(4, 39));
+  } else {
+    cy = 0;
   }
 }
