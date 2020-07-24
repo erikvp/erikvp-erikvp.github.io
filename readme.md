@@ -19,3 +19,4 @@ A CNAME file is automatically created. There is a single line in the file: `erik
 ## Push Code Revisions To Github
 
 `git push -u origin master`
+# erikvp.github.io
