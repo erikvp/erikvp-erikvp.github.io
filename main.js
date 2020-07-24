@@ -1,102 +1,123 @@
-console.log("p5 sandbox");
-let img, img2;
-let pixBlock = [];
-let pixBlock2 = [];
+console.log("Revisions: Cow");
+// A bright green cow. I can hear it screaming. I'm hungry for spinach
 
+let width = window.innerWidth;
+let height = window.innerHeight;
+
+if (window.innerWidth > window.innerHeight) {
+  width = height; // available width in browser
+} else {
+  height = width;
+}
+
+// array to store rgb values for each pixel block
+let whiteArr = [];
+
+let pixelRow = 20;
+let pixelHeight = 20;
+let pixelW = Math.round(width / pixelRow); // width of each pixel block
+let pixelH = Math.round(height / pixelHeight); // height of each pixel block
+let pixelQty = pixelRow * pixelHeight; //total number of pixels
+let cursorCounter = 0;
+let counterUp = true;
+
+let cowImg;
 function preload() {
-  img = loadImage("assets/glitch.jpg");
-  img2 = loadImage("assets/video.jpg");
+  cowImg = loadImage("assets/cow800.jpg");
 }
 
 function setup() {
-  createCanvas(840, 840);
-  pixelDensity(1);
-  frameRate(2);
-
-  // noLoop();
+  createCanvas(width, height);
+  // imageMode(CENTER);
 }
 
 function draw() {
-  background(250);
-  unmodifiedImage();
+  background(255);
+  let delta = 4;
+  frameRate(5);
+  image(cowImg, 0, 0, width, height);
 
-  setBlocks();
-  renderBlocks();
-  makeGrid();
-  // scrollLines();
-}
+  for (let y = 0; y < pixelHeight; y++) {
+    for (let x = 0; x < pixelRow; x++) {
+      // top green rectangle covering cow
+      if (y >= 7 && y <= 10 && x >= 5 && x <= 15) {
+        let center = Math.round(random(240, 251));
+        let r = 20;
+        let g = Math.round(random(center - delta, center + delta));
+        let b = 20;
 
-function makeGrid() {
-  imgH = 420;
-  imgW = 840;
-  gridW = imgW / 20;
-  gridH = imgH / 10;
+        let a = Math.round(random(100, 150));
+        let x0 = x * pixelW;
+        let y0 = y * pixelH;
+        whiteArr.push(new pixelBlock(r, g, b, a, x0, y0));
 
-  for (let y = 0; y < imgH; y += gridH) {
-    for (let x = 0; x < imgW; x += gridW) {
-      stroke(20);
-      line(x, 0, x, imgH);
-    }
-    line(0, y, imgW, y);
-  }
-}
+        // bottom green rectangle covering cow
+      } else if (y >= 11 && y <= 14 && x >= 4 && x <= 14) {
+        let center = Math.round(random(240, 251));
+        let r = 20;
+        let g = Math.round(random(center - delta, center + delta));
+        let b = 20;
 
-function unmodifiedImage() {
-  img.loadPixels(); //Loads pixel data for the display window into the img.pixels[] array
-  image(img, 0, 0); //place img at x=0, y=0
-  img.updatePixels();
+        let a = Math.round(random(100, 150));
+        let x0 = x * pixelW;
+        let y0 = y * pixelH;
+        whiteArr.push(new pixelBlock(r, g, b, a, x0, y0));
 
-  img2.loadPixels(); //Loads pixel data for the display window into the img2.pixels[] array
-  image(img2, 420, 0); //place img2 at x=420, y=0
-  img2.updatePixels();
-}
-
-function setBlocks() {
-  let i = 0;
-  let w = 42;
-  let h = 42;
-  let x2_0 = 420;
-
-  for (let y = 0; y < 10; y++) {
-    for (let x = 0; x < 10; x++) {
-      pixBlock[i] = img.get(w * x, h * y, w, h); // starting coord x0, y0, width, height
-      pixBlock2[i] = img2.get(w * x, h * y, w, h);
-      i++;
+        // white rectangles covering rest of image surrounding cow
+      } else {
+        let center = Math.round(random(240, 251));
+        let r = Math.round(random(center - delta, center + delta));
+        let g = r;
+        let b = r;
+        let a = Math.round(random(20, 50));
+        let x0 = x * pixelW;
+        let y0 = y * pixelH;
+        whiteArr.push(new pixelBlock(r, g, b, a, x0, y0));
+      }
     }
   }
+  // console.table(whiteArr);
+
+  for (let i = 0; i < pixelQty; i++) {
+    whiteArr[i].renderPixels();
+  }
+  whiteArr.length = 0;
+  renderText();
 }
 
-function renderBlocks() {
-  let x0 = 0;
-  let y0 = 420;
-  let x2_0 = 420;
-  let y2_0 = 420;
-  let i = Math.floor(random(0, 100)); // random integer 0 to 99
-
-  for (let y = 0; y < 10; y++) {
-    for (let x = 0; x < 10; x++) {
-      pixBlock[i].loadPixels();
-      image(pixBlock[i], x0 + 42 * x, y0 + 42 * y);
-      pixBlock[i].updatePixels();
-
-      pixBlock2[i].loadPixels();
-      image(pixBlock2[i], x2_0 + 42 * x, y2_0 + 42 * y);
-      pixBlock2[i].updatePixels();
-
-      // i = Math.floor(random(0, 100));
-    }
+class pixelBlock {
+  constructor(r, g, b, a, x0, y0) {
+    this.r = r;
+    this.g = g;
+    this.b = b;
+    this.a = a;
+    this.x0 = x0;
+    this.y0 = y0;
+  }
+  renderPixels() {
+    noStroke();
+    fill(this.r, this.g, this.b, this.a);
+    rect(this.x0, this.y0, pixelW, pixelH);
   }
 }
 
-function scrollLines() {
-  let a = Math.round(random(20, 50));
-  strokeWeight(1);
+function renderText() {
+  let fontSize = Math.round(width / 20);
+  let line1x = pixelW * 2;
+  let line1y = pixelH * 4;
+  let line2x = pixelW * 4;
+  let line2y = pixelH * 5.5;
+  let line3x = pixelW * 6;
+  let line3y = pixelH * 14.5;
 
-  if (cy < height / 2) {
-    stroke(220, 220, 230, a);
-    line(420, cy, 840, cy);
-    cy += Math.round(random(4, 39));
-  } else {
-    cy = 0;
-  }
+  fill(240, 200);
+  rect(pixelW * 2, pixelH * 3, pixelW * 11, pixelH * 3);
+
+  noStroke();
+  fill(40);
+  textSize(fontSize);
+  textFont("VT323");
+  text(" A bright green COW", line1x, line1y);
+  text("Listen to it SCREAM", line2x, line2y);
+  text("I'm hungry for SPINACH", line3x, line3y);
 }
