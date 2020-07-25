@@ -6,8 +6,25 @@ let y0 = 0;
 let px0 = 0; // px0 = last x0 value
 let py0 = 0; //py0 = last y0 value
 
-let width = 800;
-let height = 800;
+// USE FOR Mobile/Desktop/Tablet COMPATIBILITY
+let width = window.innerWidth;
+let height = window.innerHeight;
+
+if (window.innerWidth > window.innerHeight) {
+  width = height; // available width in browser
+} else {
+  height = width;
+}
+
+let whSquare = width; // Use for setting target area
+let canvasCenter = whSquare / 2;
+let whPercent = 0.15;
+let targetWH = whSquare * whPercent;
+
+//console.log(width, height, targetWH);
+
+//let width = 800; // use for development - fixed width only
+//let height = 800; //use for development - fixed height only
 let minX = width / 2 - 50;
 let maxX = width / 2 + 50;
 let minY = height / 2 - 50;
@@ -22,24 +39,16 @@ function setup() {
   createCanvas(width, height);
   frameRate(20);
   //Loop();
-  drawCenter();
+  xyCoords(); //define initial x0/y0 coords
+
   stroke(250, 0, 0);
 }
 
 function draw() {
   //background(20);
   xyCoords();
+  changeColor();
   displayCoords();
-}
-
-function drawCenter() {
-  let wh = 100;
-  let x0 = width / 2 - wh / 2;
-  let y0 = height / 2 - wh / 2;
-
-  noFill();
-  stroke(240, 240, 240);
-  rect(x0, y0, wh, wh);
 }
 
 function xyCoords() {
@@ -49,27 +58,33 @@ function xyCoords() {
   py0 = y0;
   x0 = Math.floor(noise(xOff) * width);
   y0 = Math.floor(noise(yOff) * width);
-  console.log("coords:", px0, py0, x0, y0);
+  //console.log("coords:", px0, py0, x0, y0);
+}
 
-  //stroke(250);
-  //line(x0, 0, x0, height); // vertical - x0, y0, x1, y1
+function changeColor() {
+  let change = Math.floor(Math.random() * 1000);
+
+  if (change < 10) {
+    console.log("change:", change);
+    let r = Math.floor(Math.random() * 255);
+    let g = Math.floor(Math.random() * 255);
+    let b = Math.floor(Math.random() * 255);
+    stroke(r, g, b);
+  }
+
+  if (counter0 == 0) {
+    console.log("skip this cycle");
+    counter0++;
+  } else {
+    line(px0, py0, x0, y0);
+  }
 }
 
 function displayCoords() {
   let xText_xCoord = x0 + 20; // x location of text "x:"
   let yText_xCoord = xText_xCoord + 60; // x location of text "y:"
   let xyText_yCoord = y0 - 20; // y location of text "x: xxx  y: yyy"
-  let r = Math.random() * 255;
-  let g = Math.random() * 255;
-  let b = Math.random() * 255;
 
-  if (x0 <= maxX && x0 >= minX && y0 <= maxY && y0 >= minY) {
-    console.log("CENTER:", x0, " - ", y0);
-    stroke(r, g, b);
-  } else {
-    //console.log("NC  n = ", n);
-    //stroke(250);
-  }
   /*
   fill(20);
   ellipse(x0, y0, 40, 40);
@@ -84,10 +99,4 @@ function displayCoords() {
   text("y: ", 730, 780);
   text(y0, 750, 780);
   */
-  if (counter0 == 0) {
-    console.log("skip this cycle");
-    counter0++;
-  } else {
-    line(px0, py0, x0, y0);
-  }
 }
