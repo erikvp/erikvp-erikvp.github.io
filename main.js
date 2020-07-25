@@ -1,107 +1,93 @@
-console.log("Video Test Pattern v3");
-let img, img2;
-let pixBlock = [];
-let pixBlock2 = [];
-// let width = window.innerWidth;
-// let height = window.innerHeight;
+console.log("p5 tutorial on perlin noise");
+let xOff = 0.0;
+let yOff = 0.0;
+let x0 = 0;
+let y0 = 0;
+let px0 = 0; // px0 = last x0 value
+let py0 = 0; //py0 = last y0 value
 
-// if (window.innerWidth > window.innerHeight) {
-//   width = height; // available width in browser
-// } else {
-//   height = width;
-// }
+let width = 800;
+let height = 800;
+let minX = width / 2 - 50;
+let maxX = width / 2 + 50;
+let minY = height / 2 - 50;
+let maxY = height / 2 + 50;
 
-function preload() {
-  img = loadImage("assets/glitch.jpg"); //glitchy test pattern
-  img2 = loadImage("assets/video.jpg"); //defective graphic card display
-}
+let counter0 = 0;
+let colorChange = 0;
+
+function preload() {}
 
 function setup() {
-  createCanvas(840, 840);
-  pixelDensity(1);
-  frameRate(2);
-
-  // noLoop();
+  createCanvas(width, height);
+  frameRate(20);
+  //Loop();
+  drawCenter();
+  stroke(250, 0, 0);
 }
 
 function draw() {
-  background(240);
-  loadReferenceImages(); // load reference images in the top two squares
-  getPixelBlocks(); // store both reference images as arrays (pixBlock, pixBlock2)
-  renderBlocks();
-  makeGrid();
+  //background(20);
+  xyCoords();
+  displayCoords();
 }
 
-function loadReferenceImages() {
-  img.loadPixels(); //Loads pixel data for the display window into the img.pixels[] array
-  image(img, 0, 0); //place img at x=0, y=0
-  img.updatePixels();
+function drawCenter() {
+  let wh = 100;
+  let x0 = width / 2 - wh / 2;
+  let y0 = height / 2 - wh / 2;
 
-  img2.loadPixels(); //Loads pixel data for the display window into the img2.pixels[] array
-  image(img2, 420, 0); //place img2 at x=420, y=0
-  img2.updatePixels();
+  noFill();
+  stroke(240, 240, 240);
+  rect(x0, y0, wh, wh);
 }
 
-function getPixelBlocks() {
-  let i = 0; //array index
-  let w = 42; //horizontal block size 420 / 10 (image width / # of grid blocks)
-  let h = 42; //vertical block size  420 / 10 (image height / # of grid blocks)
-  let x0_img2 = 420; //x0 location of img2 (video.jpg)
-  let y0_img2 = 0; //y0 location of img2
+function xyCoords() {
+  xOff = xOff + 0.01;
+  yOff = yOff + 0.03;
+  px0 = x0;
+  py0 = y0;
+  x0 = Math.floor(noise(xOff) * width);
+  y0 = Math.floor(noise(yOff) * width);
+  console.log("coords:", px0, py0, x0, y0);
 
-  /* img.get stores the reference image pixel data for each grid block
-  e.g pixBlock[0] is the pixel data at the first grid block in upper left corner 
-  Each array, pixBlock and pixBlock2 contain pixel data for each of the 100 grid blocks
-  IMPORTANT:  img2 is located at x=0, y=0 and not related to it's location within the canvas
-  at x = 420, y = 0.  Use x=0, y=0 when reading values into the pixBlock2 array.
-  DO NOT USE x/y of 420, 0 
+  //stroke(250);
+  //line(x0, 0, x0, height); // vertical - x0, y0, x1, y1
+}
+
+function displayCoords() {
+  let xText_xCoord = x0 + 20; // x location of text "x:"
+  let yText_xCoord = xText_xCoord + 60; // x location of text "y:"
+  let xyText_yCoord = y0 - 20; // y location of text "x: xxx  y: yyy"
+  let r = Math.random() * 255;
+  let g = Math.random() * 255;
+  let b = Math.random() * 255;
+
+  if (x0 <= maxX && x0 >= minX && y0 <= maxY && y0 >= minY) {
+    console.log("CENTER:", x0, " - ", y0);
+    stroke(r, g, b);
+  } else {
+    //console.log("NC  n = ", n);
+    //stroke(250);
+  }
+  /*
+  fill(20);
+  ellipse(x0, y0, 40, 40);
+  fill(250, 0, 0);
+  ellipse(x0, y0, 10, 10);
+
+  textSize(17);
+  stroke(250);
+  fill(250);
+  text("x: ", 730, 760);
+  text(x0, 750, 760);
+  text("y: ", 730, 780);
+  text(y0, 750, 780);
   */
-
-  for (let y = 0; y < 10; y++) {
-    //
-    for (let x = 0; x < 10; x++) {
-      pixBlock[i] = img.get(w * x, h * y, w, h); // get data at each grid block
-      pixBlock2[i] = img2.get(w * x, h * y, w, h); //img2 also uses x0 = 0, y0 = 0 as origin
-      i++; // array index is 0 to 99 since there are 100 grid blocks
-    }
-  }
-}
-
-/* Render a random block from img1,2 and display across the lower half of the canvas
-
-*/
-function renderBlocks() {
-  //let x0 = 0;
-  let y0 = 420;
-  let x0_img2 = 420; // x0 location for rendering img2
-  let y0_img2 = 420; // y0 location for rendering img2
-  let i = Math.floor(random(0, 100)); // random integer 0 to 99
-  let j = Math.floor(random(0, 100)); // random integer 0 to 99
-
-  for (let y = 0; y < 10; y++) {
-    for (let x = 0; x < 10; x++) {
-      pixBlock[i].loadPixels();
-      image(pixBlock[i], 42 * x, y0 + 42 * y);
-      pixBlock[i].updatePixels();
-      pixBlock2[j].loadPixels();
-      image(pixBlock2[j], x0_img2 + 42 * x, y0_img2 + 42 * y);
-      pixBlock2[j].updatePixels();
-    }
-  }
-}
-
-/* Draw a grid for the top two reference images (img, img2) */
-function makeGrid() {
-  imgH = 420; //image height
-  imgW = 840; //image width
-  gridW = imgW / 20; //sets grid spacing
-  gridH = imgH / 10; //sets grid spacing
-
-  for (let y = 0; y < imgH; y += gridH) {
-    for (let x = 0; x < imgW; x += gridW) {
-      stroke(20);
-      line(x, 0, x, imgH);
-    }
-    line(0, y, imgW, y);
+  if (counter0 == 0) {
+    console.log("skip this cycle");
+    counter0++;
+  } else {
+    line(px0, py0, x0, y0);
   }
 }
