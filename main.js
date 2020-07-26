@@ -33,7 +33,7 @@ window.onorientationchange = function (event) {
   newDrawing = true;
   firstIteration = true;
   seconds = 60;
-  location.reload();
+  window.location.reload();
 };
 
 // USE FOR SQUARE CANVAS
