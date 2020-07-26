@@ -14,6 +14,8 @@ let height = window.innerHeight; //Set canvas height to screen height
 let firstIteration = true; //Set px0, yx0 first time thru draw loop
 let newDrawing = false; //Create a new drawing when timer runs out
 
+let cancel = setInterval(countdownSeconds, 1000);
+
 function countdownSeconds() {
   seconds -= 1;
   //console.log("s: ", seconds);
@@ -24,7 +26,14 @@ function countdownSeconds() {
   }
 }
 
-let cancel = setInterval(countdownSeconds, 1000);
+window.onorientationchange = function (event) {
+  console.log("Screen Rotated " + event.target.screen.orientation.angle);
+  width = window.innerWidth;
+  height = window.innerHeight;
+  newDrawing = true;
+  firstIteration = true;
+  seconds = 60;
+};
 
 // USE FOR SQUARE CANVAS
 /*
