@@ -6,6 +6,14 @@ let y0 = 0; //Line segment
 let px0 = 0; // px0 = last x0 value
 let py0 = 0; //py0 = last y0 value
 let seconds = 60; //Initial value for countdown timer
+let r;
+let g;
+let b;
+let titleAdj;
+let titleNoun;
+let titleVerb;
+let titleAdverb;
+let title;
 
 // USE FOR Mobile/Desktop/Tablet COMPATIBILITY
 let width = window.innerWidth; //Set canvas width to screen width
@@ -20,7 +28,7 @@ function countdownSeconds() {
   seconds -= 1;
   //console.log("s: ", seconds);
 
-  if (seconds <= 0) {
+  if (seconds < 0) {
     seconds = 60;
     newDrawing = true;
   }
@@ -50,6 +58,7 @@ function setup() {
   createCanvas(width, height);
   frameRate(30);
   xyCoords(); //define initial x0/y0 coords
+  selectName();
   stroke(250, 0, 0); // set initial line color to red
 }
 
@@ -58,10 +67,11 @@ function draw() {
   if (newDrawing === true) {
     background(255);
     newDrawing = false;
+    selectName();
   }
   xyCoords();
   changeColor();
-  xytDisplay();
+  infoDisplay();
 }
 
 function xyCoords() {
@@ -76,9 +86,6 @@ function xyCoords() {
 
 function changeColor() {
   let change = Math.floor(Math.random() * 1000); // random number between 0 - 99.
-  let r;
-  let g;
-  let b;
 
   //Change rgb color 10% of the time
   if (change < 10) {
@@ -97,13 +104,39 @@ function changeColor() {
   }
 }
 
-function xytDisplay() {
+function selectName() {
+  let adjIndex = Math.floor(Math.random() * adjective.length);
+  let nounIndex = Math.floor(Math.random() * noun.length);
+  let verbIndex = Math.floor(Math.random() * verb.length);
+  let adverbIndex = Math.floor(Math.random() * adverb.length);
+  titleAdj = adjective[adjIndex];
+  titleNoun = noun[nounIndex];
+  titleVerb = verb[verbIndex];
+  titleAdverb = adverb[adverbIndex];
+  title = titleAdj
+    .concat(" " + titleNoun)
+    .concat(" " + titleVerb)
+    .concat(" " + titleAdverb);
+}
+
+function infoDisplay() {
+  //Title Block in left bottom corner
   fill(255); // white for rectangle
-  rect(width / 2 - 105, height - 50, 200, 30);
-  textSize(20);
+  noStroke();
+  rect(5, height - 50, 350, 45);
+  textSize(15);
   fill(0); // black text
   noStroke(); //no border on text
-  text("x: " + x0, width / 2 - 100, height - 30);
-  text("y: " + y0, width / 2 - 30, height - 30);
-  text("t: " + seconds, width / 2 + 40, height - 30);
+  text(title, 10, height - 30);
+
+  //Color tracker rectangle
+  fill(r, g, b);
+  rect(10, height - 20, 25, 10);
+
+  //Text for x, y, t
+  fill(0);
+  noStroke();
+  text("x: " + x0, 40, height - 10);
+  text("y: " + y0, 90, height - 10);
+  text("t: " + seconds + "s", 140, height - 10);
 }
