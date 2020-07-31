@@ -5,7 +5,7 @@ let x0 = 0; // Line segment
 let y0 = 0; //Line segment
 let px0 = 0; // px0 = last x0 value
 let py0 = 0; //py0 = last y0 value
-let seconds = 60; //Initial value for countdown timer
+let seconds = 20; //Initial value for countdown timer
 let r;
 let g;
 let b;
@@ -29,11 +29,11 @@ function countdownSeconds() {
   //console.log("s: ", seconds);
 
   if (seconds < 0) {
-    seconds = 60;
+    seconds = Math.floor(random() * 40 + 20); //Set new drawing timer between 20 - 60 seconds
     newDrawing = true;
   }
 }
-
+//Check for mobile or tablet orientation change and reset drawing.
 window.onorientationchange = function (event) {
   console.log("Screen Rotated " + event.target.screen.orientation.angle);
   width = window.innerWidth;
@@ -63,7 +63,7 @@ function setup() {
 }
 
 function draw() {
-  //Clear screen every minute
+  //Clear screen for new drawing
   if (newDrawing === true) {
     background(255);
     newDrawing = false;
@@ -72,6 +72,21 @@ function draw() {
   xyCoords();
   changeColor();
   infoDisplay();
+}
+
+function stickPiles() {
+  xMin = 100;
+  xMax = 500;
+  yMin = 100;
+  yMax = 300;
+
+  x0 = Math.floor(Math.random() * xMin);
+  x1 = Math.floor(Math.random() * xMin);
+
+  stroke(0);
+  line(x0, yMin, x1, yMax);
+
+  line;
 }
 
 function xyCoords() {
@@ -109,6 +124,7 @@ function selectName() {
   let nounIndex = Math.floor(Math.random() * noun.length);
   let verbIndex = Math.floor(Math.random() * verb.length);
   let adverbIndex = Math.floor(Math.random() * adverb.length);
+
   titleAdj = adjective[adjIndex];
   titleNoun = noun[nounIndex];
   titleVerb = verb[verbIndex];
@@ -123,7 +139,7 @@ function infoDisplay() {
   //Title Block in left bottom corner
   fill(255); // white for rectangle
   noStroke();
-  rect(5, height - 50, 350, 45);
+  rect(5, height - 50, 360, 45);
   textSize(15);
   fill(0); // black text
   noStroke(); //no border on text
