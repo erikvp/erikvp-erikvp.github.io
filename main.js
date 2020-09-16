@@ -1,4 +1,4 @@
-console.log("$scribbl3 v1");
+console.log("$scribbl3 v1.00");
 let xOff = 0.0; //Used for perlin noise x0
 let yOff = 0.0; //Used for perline noise y0
 let x0 = 0; // Line segment
@@ -149,10 +149,11 @@ function infoDisplay() {
   fill(r, g, b);
   rect(10, height - 20, 25, 10);
 
-  //Text for x, y, t
+  //Text for x, y, t, version
   fill(0);
   noStroke();
   text("x: " + x0, 40, height - 10);
   text("y: " + y0, 90, height - 10);
   text("t: " + seconds + "s", 140, height - 10);
+  text("v1.00", 190, height - 10);
 }
